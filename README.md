@@ -1,5 +1,5 @@
 # det3d-readme
-This is a more detailed instruction of how to get [det3d](https://github.com/GatikAI/det3d/tree/98c86de7dd88f569e430368761b0c5eca6568672) run.
+This is a more detailed instruction of how to get [det3d](https://github.com/GatikAI/det3d) run.
 
 Suppose the data is at a shared directory on the server: */real_data_path*
 
@@ -10,7 +10,7 @@ docker build . -t det3d_dev_ting
 #### 2. make a output directory to store the checkpoint and logs, here we use /real_output_path
 
 #### 3. run an container named det3d_ting(or whatever you like)
-Environment variables can be used to specify data paths for server vs. Cloud (not sure about how to use this yet)
+Environment variables can be used to specify data paths for server vs. Cloud (see the 'Environment' section in GCP_README.md)
 ```
 docker run -it --gpus all -v /real_data_path:/data -v /real_output_path:/output -v $(pwd):/src/det3d -e "BASE_DATA_DIR=/data" -e "BASE_INFO_DIR=/data/infos_v2" --net=host --name det3d_ting --rm det3d_dev_ting bash
 ```
@@ -18,11 +18,11 @@ docker run -it --gpus all -v /real_data_path:/data -v /real_output_path:/output 
 #### 4. preprocess data, here we use the dataset specified by config file: data_loader_deepen.yaml
 ```
 # Use tools/cfgs/data_configs/data_loader_deepen.yaml
+# Convert dataset metadata and annotations to standard .pkl format.
 python tools/preprocess_data.py --cfg_file tools/cfgs/data_configs/data_loader_deepen.yaml
+# Prepare DB of ground truth examples that will be drawn to augment training data.
 python pcdet/datasets/processors/object_db_sampler/prepare_object_db.py --cfg_file tools/cfgs/data_configs/data_loader_deepen.yaml
 ```
-the first command convert the format of the meta info of the dataset and save it into .pkl file; the second prepare the sample_data_set according to category and during training random samples will be drawn from sample_data_set to augment the training data.
-
 
 #### 5. Visualize the dataset
 
